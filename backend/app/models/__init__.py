@@ -13,9 +13,9 @@ Usage:
 
 from app.models.ai_detection import (
     ai_detector_scores,
-    aeo_scores,
     evaluation_runs,
 )
+from app.models.aeo_scores import aeo_scores
 from app.models.approvals import approval_attempts, approval_states
 from app.models.base import metadata
 from app.models.blogs import blog_versions, blogs
