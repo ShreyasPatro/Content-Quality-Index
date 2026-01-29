@@ -11,14 +11,17 @@ Usage:
     stmt = select(users).where(users.c.email == "user@example.com")
 """
 
+from app.models.ai_detection import (
+    ai_detector_scores,
+    aeo_scores,
+    evaluation_runs,
+)
 from app.models.approvals import approval_attempts, approval_states
 from app.models.base import metadata
 from app.models.blogs import blog_versions, blogs
 from app.models.escalations import escalations
-from app.models.evaluations import evaluation_runs
 from app.models.reviews import human_review_actions
 from app.models.rewrites import rewrite_cycles, rewrite_suggestions
-from app.models.scores import aeo_scores, ai_detector_scores
 from app.models.users import users
 
 __all__ = [
@@ -29,9 +32,8 @@ __all__ = [
     # Blogs
     "blogs",
     "blog_versions",
-    # Evaluations
+    # AI Detection
     "evaluation_runs",
-    # Scores
     "ai_detector_scores",
     "aeo_scores",
     # Rewrites

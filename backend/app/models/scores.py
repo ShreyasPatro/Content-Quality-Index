@@ -48,4 +48,28 @@ aeo_scores = Table(
     UniqueConstraint("run_id", "query_intent", name="uq_aeo_score"),
 )
 
+
 Index("idx_aeo_scores_run", aeo_scores.c.run_id)
+
+
+ai_likeness_rubric_scores = Table(
+    "ai_likeness_rubric_scores",
+    metadata,
+    Column("id", UUID, primary_key=True, server_default=text("uuid_generate_v4()")),
+    Column("run_id", UUID, ForeignKey("evaluation_runs.id"), nullable=False),
+    Column("score", Numeric(5, 2), nullable=False),
+    Column("details", JSONB, nullable=False),
+    Column(
+        "created_at",
+        sa.TIMESTAMP(timezone=True),
+        server_default=text("now()"),
+        nullable=False,
+    ),
+    CheckConstraint(
+        "score >= 0 AND score <= 100",
+        name="chk_rubric_scores_score",
+    ),
+    UniqueConstraint("run_id", name="uq_rubric_score_run_id"),
+)
+
+Index("idx_rubric_scores_run", ai_likeness_rubric_scores.c.run_id)
