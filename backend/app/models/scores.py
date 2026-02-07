@@ -12,18 +12,19 @@ from sqlalchemy import (
     UniqueConstraint,
     text,
 )
-from sqlalchemy.dialects.postgresql import JSONB, UUID
+import sqlalchemy
+import uuid
 
 from app.models.base import metadata
 
 ai_detector_scores = Table(
     "ai_detector_scores",
     metadata,
-    Column("id", UUID, primary_key=True, server_default=text("uuid_generate_v4()")),
-    Column("run_id", UUID, ForeignKey("evaluation_runs.id"), nullable=False),
+    Column("id", String(36), primary_key=True, default=lambda: str(uuid.uuid4())),
+    Column("run_id", String(36), ForeignKey("evaluation_runs.id"), nullable=False),
     Column("provider", String(50), nullable=False),
     Column("score", Numeric(5, 2), nullable=False),
-    Column("details", JSONB, nullable=True),
+    Column("details", sqlalchemy.JSON, nullable=True),
     CheckConstraint(
         "score >= 0 AND score <= 100",
         name="chk_ai_detector_scores_score",
@@ -33,20 +34,17 @@ ai_detector_scores = Table(
 
 Index("idx_detector_scores_run", ai_detector_scores.c.run_id)
 
-
-
-
 ai_likeness_rubric_scores = Table(
     "ai_likeness_rubric_scores",
     metadata,
-    Column("id", UUID, primary_key=True, server_default=text("uuid_generate_v4()")),
-    Column("run_id", UUID, ForeignKey("evaluation_runs.id"), nullable=False),
+    Column("id", String(36), primary_key=True, default=lambda: str(uuid.uuid4())),
+    Column("run_id", String(36), ForeignKey("evaluation_runs.id"), nullable=False),
     Column("score", Numeric(5, 2), nullable=False),
-    Column("details", JSONB, nullable=False),
+    Column("details", sqlalchemy.JSON, nullable=False),
     Column(
         "created_at",
-        sa.TIMESTAMP(timezone=True),
-        server_default=text("now()"),
+        String,
+        server_default=text("CURRENT_TIMESTAMP"),
         nullable=False,
     ),
     CheckConstraint(

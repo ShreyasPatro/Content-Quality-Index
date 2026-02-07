@@ -14,16 +14,18 @@ from sqlalchemy import (
     Text,
     UniqueConstraint,
     text,
+    String,
 )
-from sqlalchemy.dialects.postgresql import JSONB, UUID
+import sqlalchemy
+import uuid
 
 from app.models.base import metadata
 
 aeo_scores = Table(
     "aeo_scores",
     metadata,
-    Column("id", UUID, primary_key=True, server_default=text("uuid_generate_v4()")),
-    Column("run_id", UUID, ForeignKey("evaluation_runs.id"), nullable=False),
+    Column("id", String(36), primary_key=True, default=lambda: str(uuid.uuid4())),
+    Column("run_id", String(36), ForeignKey("evaluation_runs.id"), nullable=False),
     Column("rubric_version", Text, nullable=False),
     
     # Top-Level Aggregate
@@ -39,7 +41,7 @@ aeo_scores = Table(
     Column("aeo_readability", Numeric(5, 2), nullable=False),
     
     # Detailed Evidence
-    Column("details", JSONB, nullable=False),
+    Column("details", sqlalchemy.JSON, nullable=False),
     
     # Constraints
     CheckConstraint("aeo_total >= 0 AND aeo_total <= 100", name="chk_aeo_total"),

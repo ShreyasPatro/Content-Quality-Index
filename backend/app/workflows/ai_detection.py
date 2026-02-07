@@ -326,3 +326,21 @@ def run_ai_detection_task(evaluation_run_id: UUID, blog_version_id: UUID):
     This task ONLY calls the pure function run_ai_detection.
     """
     run_ai_detection(evaluation_run_id, blog_version_id)
+
+
+def run_ai_detection_sync(evaluation_run_id: UUID, blog_version_id: UUID) -> None:
+    """Synchronous wrapper for AI detection workflow.
+    
+    Used by evaluation orchestrator for sequential execution.
+    
+    REGULATORY: This wrapper preserves deterministic scoring behavior.
+    No changes to scoring logic or persistence patterns.
+    
+    Args:
+        evaluation_run_id: UUID of the evaluation run
+        blog_version_id: UUID of the blog version to evaluate
+        
+    Raises:
+        Exception: On critical failures (propagated to orchestrator)
+    """
+    asyncio.run(_run_ai_detection_impl(evaluation_run_id, blog_version_id))

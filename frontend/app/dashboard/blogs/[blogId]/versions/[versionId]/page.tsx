@@ -2,15 +2,17 @@ import Link from 'next/link'
 import { ScoreTrendChart } from '@/components/ScoreTrendChart'
 import { ScoreBreakdown } from '@/components/ScoreBreakdown'
 import { ScoreExplanation } from '@/components/ScoreExplanation'
+import { ApprovalPanel } from '@/components/ApprovalPanel'
 
 // Mock data - replace with actual API calls
 async function getVersion(versionId: string) {
     return {
         id: versionId,
         versionNumber: 3,
-        state: 'in_review',
+        state: 'in_review' as 'draft' | 'in_review' | 'approved' | 'rejected' | 'archived',
         content: '# Sample Content v3\n\nThis is the updated blog post content.\n\nNew paragraph added here.\n\nAnother change.',
         createdAt: '2026-01-29T10:00:00Z',
+        reviewStartedAt: '2026-01-29T22:45:00Z', // Started 4 minutes ago for demo
         blogId: '1',
         blogTitle: 'Sample Blog Post',
         parentVersionId: 'v2-uuid',
@@ -127,12 +129,13 @@ export default async function VersionDetailPage({
                 </h1>
                 <div className="flex gap-4 items-center">
                     <span
-                        className={`px-3 py-1 rounded-md text-sm font-medium ${version.state === 'approved'
-                                ? 'bg-green-100 text-green-800'
+                        className={
+                            version.state === 'approved'
+                                ? 'px-3 py-1 rounded-md text-sm font-medium bg-green-100 text-green-800'
                                 : version.state === 'in_review'
-                                    ? 'bg-yellow-100 text-yellow-800'
-                                    : 'bg-gray-100 text-gray-800'
-                            }`}
+                                    ? 'px-3 py-1 rounded-md text-sm font-medium bg-yellow-100 text-yellow-800'
+                                    : 'px-3 py-1 rounded-md text-sm font-medium bg-gray-100 text-gray-800'
+                        }
                     >
                         {version.state.replace('_', ' ').toUpperCase()}
                     </span>
@@ -172,6 +175,15 @@ export default async function VersionDetailPage({
                         />
                         <ScoreExplanation explanations={scores.aeo.explanations} scoreType="aeo" />
                     </div>
+
+                    {/* Approval Panel */}
+                    <ApprovalPanel
+                        versionId={version.id}
+                        versionNumber={version.versionNumber}
+                        currentState={version.state}
+                        reviewStartedAt={version.reviewStartedAt}
+                        isDisabled={true}
+                    />
                 </div>
 
                 {/* Sidebar - Score Breakdowns */}

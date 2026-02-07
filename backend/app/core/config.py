@@ -22,7 +22,7 @@ class Settings(BaseSettings):
     cors_origins: list[str] = Field(default_factory=lambda: ["http://localhost:3000"])
 
     # Database
-    database_url: PostgresDsn
+    database_url: str
     database_pool_size: int = 20
     database_max_overflow: int = 10
 

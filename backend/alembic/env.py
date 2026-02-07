@@ -23,9 +23,8 @@ if config.config_file_name is not None:
 config.set_main_option("sqlalchemy.url", str(settings.database_url))
 
 # Target metadata for autogenerate support
-# NOTE: We are NOT using autogenerate for this project
-# Schema is managed via schema.sql and migrations are written manually
-target_metadata = None
+from app.models import metadata
+target_metadata = metadata
 
 
 def run_migrations_offline() -> None:
