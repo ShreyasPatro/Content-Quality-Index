@@ -130,3 +130,21 @@ def run_aeo_scoring(evaluation_run_id: UUID, blog_version_id: UUID) -> None:
 def run_aeo_scoring_task(evaluation_run_id: UUID, blog_version_id: UUID):
     """Celery task wrapper for AEO scoring."""
     run_aeo_scoring(evaluation_run_id, blog_version_id)
+
+
+def run_aeo_scoring_sync(evaluation_run_id: UUID, blog_version_id: UUID) -> None:
+    """Synchronous wrapper for AEO scoring workflow.
+    
+    Used by evaluation orchestrator for sequential execution.
+    
+    REGULATORY: This wrapper preserves deterministic scoring behavior.
+    All scoring remains regex/structure-based with no ML inference.
+    
+    Args:
+        evaluation_run_id: UUID of the evaluation run
+        blog_version_id: UUID of the blog version to evaluate
+        
+    Raises:
+        Exception: On critical failures (propagated to orchestrator)
+    """
+    asyncio.run(_run_aeo_scoring_impl(evaluation_run_id, blog_version_id))

@@ -1,24 +1,25 @@
 """Evaluation run table definitions."""
 
 from sqlalchemy import CheckConstraint, Column, ForeignKey, Index, String, Table, text
-from sqlalchemy.dialects.postgresql import JSONB, TIMESTAMPTZ, UUID
+import sqlalchemy
+import uuid
 
 from app.models.base import metadata
 
 evaluation_runs = Table(
     "evaluation_runs",
     metadata,
-    Column("id", UUID, primary_key=True, server_default=text("uuid_generate_v4()")),
+    Column("id", String(36), primary_key=True, default=lambda: str(uuid.uuid4())),
     Column(
         "blog_version_id",
-        UUID,
+        String(36),
         ForeignKey("blog_versions.id"),
         nullable=False,
     ),
-    Column("run_at", TIMESTAMPTZ, nullable=False, server_default=text("NOW()")),
-    Column("triggered_by", UUID, ForeignKey("users.id"), nullable=True),
-    Column("model_config", JSONB, nullable=True),
-    Column("completed_at", TIMESTAMPTZ, nullable=True),
+    Column("run_at", String, nullable=False, server_default=text("CURRENT_TIMESTAMP")),
+    Column("triggered_by", String(36), ForeignKey("users.id"), nullable=True),
+    Column("model_config", sqlalchemy.JSON, nullable=True),
+    Column("completed_at", String, nullable=True),
     Column(
         "status",
         String(20),
@@ -35,5 +36,5 @@ Index("idx_eval_runs_version", evaluation_runs.c.blog_version_id)
 Index(
     "idx_eval_runs_status",
     evaluation_runs.c.status,
-    postgresql_where=evaluation_runs.c.completed_at.is_(None),
+    sqlite_where=evaluation_runs.c.completed_at.is_(None),
 )

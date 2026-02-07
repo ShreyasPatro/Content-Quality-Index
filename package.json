@@ -1,0 +1,10 @@
+{
+    "name": "seo-aeo-cqi",
+    "version": "1.0.0",
+    "private": true,
+    "scripts": {
+        "dev": "cd frontend && npm run dev",
+        "dev:backend": "cd backend && python -m uvicorn app.main:app --reload",
+        "dev:all": "concurrently \"npm run dev\" \"npm run dev:backend\""
+    }
+}

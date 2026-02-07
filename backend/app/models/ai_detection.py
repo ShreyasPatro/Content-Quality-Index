@@ -13,7 +13,8 @@ This module provides a consolidated import point for AI detection-related tables
 """
 
 from app.models.evaluations import evaluation_runs
-from app.models.scores import aeo_scores, ai_detector_scores
+from app.models.scores import ai_detector_scores
+from app.models.aeo_scores import aeo_scores
 
 __all__ = [
     "ai_detector_scores",

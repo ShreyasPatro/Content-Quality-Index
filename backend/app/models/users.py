@@ -1,14 +1,14 @@
 """User table definitions."""
 
 from sqlalchemy import Boolean, CheckConstraint, Column, Index, String, Table, text
-from sqlalchemy.dialects.postgresql import TIMESTAMPTZ, UUID
+import uuid
 
 from app.models.base import metadata
 
 users = Table(
     "users",
     metadata,
-    Column("id", UUID, primary_key=True, server_default=text("uuid_generate_v4()")),
+    Column("id", String(36), primary_key=True, default=lambda: str(uuid.uuid4())),
     Column("email", String(255), nullable=False, unique=True),
     Column(
         "role",
@@ -17,7 +17,8 @@ users = Table(
         server_default=text("'writer'"),
     ),
     Column("is_human", Boolean, nullable=False, server_default=text("false")),
-    Column("created_at", TIMESTAMPTZ, nullable=False, server_default=text("NOW()")),
+    Column("hashed_password", String(255), nullable=False, server_default=text("''")),
+    Column("created_at", String, nullable=False, server_default=text("CURRENT_TIMESTAMP")),
     # Prevent service accounts from being marked as human
     CheckConstraint(
         "role != 'system' OR is_human = false",
@@ -31,4 +32,4 @@ users = Table(
 
 # Indexes
 Index("idx_users_role", users.c.role)
-Index("idx_users_is_human", users.c.is_human, postgresql_where=users.c.is_human == True)
+Index("idx_users_is_human", users.c.is_human, sqlite_where=users.c.is_human == True)
